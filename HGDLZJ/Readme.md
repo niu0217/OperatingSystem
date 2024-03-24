@@ -10,3 +10,9 @@
 
 ## 2. 重要知识点
 
+[系统调用.md](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/系统调用.md)
+
+[Linux虚拟内存.md](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/Linux虚拟内存.md)
+
+[Linux内存映射.md](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/Linux内存映射.md)
+
