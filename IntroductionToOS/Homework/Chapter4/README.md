@@ -60,6 +60,7 @@ The most important option to understand is the PROCESS_LIST (as specified by
 the -l or --processlist flags) which specifies exactly what each running
 program (or 'process') will do. A process consists of instructions, and each
 instruction can just do one of two things: 
+
 - use the CPU 
 - issue an IO (and wait for it to complete)
 
@@ -224,6 +225,7 @@ quite busy. In general, we'd like to keep all the devices busy, as
 that is a better use of resources.
 
 There are a few other important flags:
+
 ```sh
   -s SEED, --seed=SEED  the random seed  
     this gives you way to create a bunch of different jobs randomly
