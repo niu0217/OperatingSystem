@@ -31,5 +31,5 @@
 + CPU调度.md
 + Linux0.11中的调度函数.md
 
-## 6. 内存管理
+## [6. 内存管理](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/MemoryManage/Readme.md)
 
