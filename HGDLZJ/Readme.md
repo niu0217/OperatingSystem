@@ -20,13 +20,16 @@
 
 + Linux内存映射.md
 
-## [4. 进程与线程](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/ProcessAndThread/Readme.md)
+## [3. 进程与线程](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/ProcessAndThread/Readme.md)
 
-## 5. CPU调度
+## 4. CPU调度
 
 + CPU调度.md
 + Linux0.11中的调度函数.md
 
-## [6. 内存管理](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/MemoryManage/Readme.md)
+## [5. 内存管理](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/MemoryManage/Readme.md)
 
-## [7. IO和文件系统](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/IOAndFileSystem/Readme.md)
+## [6. IO和文件系统](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/IOAndFileSystem/Readme.md)
+
+
+
