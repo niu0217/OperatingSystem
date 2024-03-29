@@ -20,10 +20,6 @@
 
 + Linux内存映射.md
 
-## 3. 文件系统
-
-+ 共享文件.md
-
 ## [4. 进程与线程](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/ProcessAndThread/Readme.md)
 
 ## 5. CPU调度
@@ -33,3 +29,4 @@
 
 ## [6. 内存管理](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/MemoryManage/Readme.md)
 
+## [7. IO和文件系统](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/IOAndFileSystem/Readme.md)
