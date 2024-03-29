@@ -31,5 +31,5 @@
 
 ## [6. IO和文件系统](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/IOAndFileSystem/Readme.md)
 
-
+## [7. 实验](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/Library/Readme.md)
 

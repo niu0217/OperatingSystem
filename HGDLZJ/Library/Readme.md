@@ -8,5 +8,5 @@
 
 [Github博主实现](https://github.com/hoverwinter/HIT-OSLab?tab=readme-ov-file)
 
-## [3. 配置环境]()
+## [3. 配置环境](https://github.com/niu0217/OperatingSystem/tree/main/HGDLZJ/Library/%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83)
 
