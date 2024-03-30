@@ -8,24 +8,11 @@
 
 [gitbub博主实现](https://github.com/hoverwinter/HIT-OSLab?tab=readme-ov-file)
 
-## 2. 重要知识点
-
-+ 王牌.md
-
-+ 可执行目标文件.md
-
-+ 系统调用.md
-
-+ Linux虚拟内存.md
-
-+ Linux内存映射.md
+## [2. 重要知识点]()
 
 ## [3. 进程与线程](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/ProcessAndThread/Readme.md)
 
-## 4. CPU调度
-
-+ CPU调度.md
-+ Linux0.11中的调度函数.md
+## [4. CPU调度]()
 
 ## [5. 内存管理](https://github.com/niu0217/OperatingSystem/blob/main/HGDLZJ/MemoryManage/Readme.md)
 
