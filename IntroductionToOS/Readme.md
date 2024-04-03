@@ -6,4 +6,4 @@
 
 ## [2. 读书笔记](https://github.com/niu0217/OperatingSystem/blob/main/IntroductionToOS/ReadingNotes/Readme.md)
 
-## [3. 复习]()
+## [3. 复习](https://github.com/niu0217/OperatingSystem/tree/main/IntroductionToOS/Review)
