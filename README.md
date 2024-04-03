@@ -6,4 +6,4 @@
 
 ## [2. 操作系统导论](https://github.com/niu0217/OperatingSystem/blob/main/IntroductionToOS/Readme.md)
 
-## [3. 自我探索]()
+## [3. 自我探索](https://github.com/niu0217/OperatingSystem/tree/main/Explore)
