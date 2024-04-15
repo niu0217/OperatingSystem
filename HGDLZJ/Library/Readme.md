@@ -18,4 +18,6 @@
 
 ## [7. 实验四](https://github.com/niu0217/OperatingSystem/tree/main/HGDLZJ/Library/Lib4)
 
-## 8. 实验五
+## [8. 实验五](https://github.com/niu0217/OperatingSystem/tree/main/HGDLZJ/Library/Lib5)
+
+## 9. 实验六
