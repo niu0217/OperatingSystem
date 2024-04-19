@@ -24,5 +24,5 @@
 
 ## [10. 实验七](https://github.com/niu0217/OperatingSystem/tree/main/HGDLZJ/Library/Lib7)
 
-## 11. 实验八
+## [11. 实验八](https://github.com/niu0217/OperatingSystem/tree/main/HGDLZJ/Library/Lib8)
 
