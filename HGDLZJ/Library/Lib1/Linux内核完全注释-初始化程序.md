@@ -1,16 +1,10 @@
-# Linux内核完全注释-初始化程序
+# Linux内核完全注释-初始化程序 
 
-## 1. main.c程序
+## 参考资料
 
-![image-20240331112649062](Linux内核完全注释-初始化程序.assets/image-20240331112649062.png) 
++ https://developer.aliyun.com/article/32079
 
-![image-20240331114034646](Linux内核完全注释-初始化程序.assets/image-20240331114034646.png) 
-
-![image-20240331114053184](Linux内核完全注释-初始化程序.assets/image-20240331114053184.png) 
-
-![image-20240331114107712](Linux内核完全注释-初始化程序.assets/image-20240331114107712.png) 
-
-## 2. 注释后的main.c文件
+## 1. init/main.c代码
 
 ```c
 /*
@@ -221,14 +215,220 @@ void init(void)
 		sync();
 	}
 	_exit(0);	/* NOTE! _exit, not exit() */
-}
+}  
 ```
 
-## 3. 补充知识
+## 2. 内核初始化程序流程示意图
 
-### 3.1 会话期的概念
+![image-20240418175204951](Linux内核完全注释-初始化程序.assets/image-20240418175204951.png) 
 
-![image-20240331140327403](Linux内核完全注释-初始化程序.assets/image-20240331140327403.png) 
+## 3. main函数分析
 
-![image-20240331140425103](Linux内核完全注释-初始化程序.assets/image-20240331140425103.png) 
+```c
+void main(void)		/* This really IS void, no error here. */
+{			/* The startup routine assumes (well, ...) this */
+/*
+ * Interrupts are still disabled. Do necessary setups, then
+ * enable them
+ */
+ 	ROOT_DEV = ORIG_ROOT_DEV;
+ 	drive_info = DRIVE_INFO;
+	memory_end = (1<<20) + (EXT_MEM_K<<10);
+	memory_end &= 0xfffff000;
+	if (memory_end > 16*1024*1024)
+		memory_end = 16*1024*1024;
+	if (memory_end > 12*1024*1024)
+		buffer_memory_end = 4*1024*1024;
+	else if (memory_end > 6*1024*1024)
+		buffer_memory_end = 2*1024*1024;
+	else
+		buffer_memory_end = 1*1024*1024;
+	main_memory_start = buffer_memory_end;
+#ifdef RAMDISK
+	main_memory_start += rd_init(main_memory_start, RAMDISK*1024);
+#endif
+	mem_init(main_memory_start,memory_end); //主内存区初始化
+	trap_init();        //陷阱门(硬件中断向量)初始化
+	blk_dev_init();     //块设备初始化
+	chr_dev_init();     //字符设备初始化
+	tty_init();         //tty初始化
+	time_init();        //设置开机启动时间
+	sched_init();       //调度程序初始化(加载任务0的tr,ldtr)
+	buffer_init(buffer_memory_end); //缓冲管理初始化，建内存链表
+	hd_init();          //硬盘初始化
+	floppy_init();      //软驱初始化
+	sti();              //所有初始化工作都完成了，开启中断
+	move_to_user_mode();    //移到用户模式下执行
+	if (!fork()) {		/* we count on this going ok */
+		init();     //在新建的子进程(任务1)中执行
+	}
+/*
+ *   NOTE!!   For any other task 'pause()' would mean we have to get a
+ * signal to awaken, but task0 is the sole exception (see 'schedule()')
+ * as task 0 gets activated at every idle moment (when no other tasks
+ * can run). For task0 'pause()' just means we go check if some other
+ * task can run, and if not we return here.
+ */
+	for(;;) pause();    //调度函数只要发现系统中没有其他任务可以运行时就会切换到任务0
+}
+
+```
+
+## 4. init函数分析
+
+### 4.1 引入
+
+![image-20240418174114552](Linux内核完全注释-初始化程序.assets/image-20240418174114552.png) 
+
+进程0仅执行pause系统调用，并又会调用调度函数。
+
+![image-20240418175902690](Linux内核完全注释-初始化程序.assets/image-20240418175902690.png) 
+
+### 4.2 进入init函数内部
+
+![image-20240418174520337](Linux内核完全注释-初始化程序.assets/image-20240418174520337.png) 
+
+![image-20240418195448212](Linux内核完全注释-初始化程序.assets/image-20240418195448212.png) 
+
+### 4.3 证据
+
+```bash
+ubuntu@VM-0-16-ubuntu:~/Linux011/oslab$ head -n 100 process.log
+1       N       48	# 进程1新建（init()）。此前是进程0建立和运行
+1       J       48	# 新建后进入就绪队列
+0       J       48	# 进程0从运行->就绪，让出CPU
+1       R       48	# 进程1运行
+2       N       49	# 进程1建立进程2。2会运行/etc/rc脚本，然后退出
+2       J       49
+1       W       49	# 进程1开始等待（等待进程2退出）
+2       R       49	# 进程2运行
+3       N       63	# 进程2建立进程3。3是/bin/sh建立的运行脚本的子进程
+3       J       64
+2       J       64	# 进程2从运行->就绪，让出CPU
+3       R       64	# 进程3运行
+3       W       68	# 进程3从运行->阻塞
+2       R       68	# 进程2运行
+2       E       73	# 进程2不等进程3退出，就先走一步了
+1       J       73	# 进程1此前在等待进程2退出，被阻塞。进程2退出后，重新进入就绪队列
+1       R       73
+4       N       74	# 进程1建立进程4，即shell
+4       J       74
+1       W       74	# 进程1等待shell退出（除非执行exit命令，否则shell不会退出）
+4       R       74	# 进程4运行
+5       N       106	# 进程5是shell建立的不知道做什么的进程
+5       J       106
+4       W       107
+5       R       107
+4       J       109
+5       E       109	# 进程5很快退出
+4       R       109	
+4       W       115	# shell等待用户输入命令
+0       R       115	# 因为无事可做，所以进程0重出江湖
+4       J       1710	# 用户输入命令了，唤醒了shell
+4       R       1710
+4       W       1710
+0       R       1710
+4       J       1760
+4       R       1760
+4       W       1760
+0       R       1760
+4       J       1968
+4       R       1968
+4       W       1968
+0       R       1968
+4       J       2011
+4       R       2011
+4       W       2011
+0       R       2011
+4       J       2081
+4       R       2081
+4       W       2081
+0       R       2081
+4       J       2108
+4       R       2108
+4       W       2108
+0       R       2108
+4       J       2704
+4       R       2704
+4       W       2704
+0       R       2704
+4       J       2746
+4       R       2746
+4       W       2746
+0       R       2746
+3       J       3067
+3       R       3067
+3       W       3067
+0       R       3067
+4       J       3483
+4       R       3483
+4       W       3483
+0       R       3483
+4       J       3532
+4       R       3532
+4       W       3532
+0       R       3532
+4       J       3979
+4       R       3979
+4       W       3979
+0       R       3979
+4       J       4015
+4       R       4015
+4       W       4015
+0       R       4015
+4       J       4800
+4       R       4800
+4       W       4800
+0       R       4800
+4       J       5167
+4       R       5167
+4       W       5167
+0       R       5167
+4       J       5693
+4       R       5693
+4       W       5693
+0       R       5693
+4       J       5695
+4       R       5695
+4       W       5696
+0       R       5696
+4       J       5696
+4       R       5696
+```
+
+## 5. 会话期的概念 
+
+![image-20240419092235010](Linux内核完全注释-初始化程序.assets/image-20240419092235010.png) 
+
+![image-20240419092544556](Linux内核完全注释-初始化程序.assets/image-20240419092544556.png) 
+
+## 6. 环境初始化工作
+
+不属于内核范畴！！！！！
+
+### 6.1 有关环境初始化的程序
+
+![image-20240419093301951](Linux内核完全注释-初始化程序.assets/image-20240419093301951.png) 
+
+为了能具有登陆系统功能和多人同时使用系统的功能，通常的：
+
++ 系统还会执行系统环境初始化程序init.c，而此程序会根据系统/etc/目录中配置文件的设置信息，对系统中支持的每个终端设备创建子进程，并在子进程中运行终端初始化设置程序agetty；
++ agetty则会在终端上显示用户登陆提示信息“login：”。当用户键入了用户名后，agetty被替换成login程序；
++ login程序在验证了用户输入口令的正确性之后，最终调用shell程序，并进入shell交互工作界面。
+
+### 6.2 详细解析
+
+![image-20240419095440625](Linux内核完全注释-初始化程序.assets/image-20240419095440625.png) 
+
+![image-20240419100401559](Linux内核完全注释-初始化程序.assets/image-20240419100401559.png)  
+
+### 6.3 登陆系统时shell的读取顺序
+
++ https://developer.aliyun.com/article/559854
+
+![image-20240419100544757](Linux内核完全注释-初始化程序.assets/image-20240419100544757.png) 
+
++ https://cloud.tencent.com/developer/article/1116370
+
+![img](Linux内核完全注释-初始化程序.assets/kjopmerin0.jpeg) 
 
